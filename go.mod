@@ -1,4 +1,4 @@
-module moul.io/quicssh
+module github.com/michurin/quicssh
 
 go 1.23.0
 
