@@ -107,7 +107,7 @@ func tlsConfig(ctx context.Context) (*tls.Config, error) {
 
 func serverConnectionHandler(ctx context.Context, conn quic.Connection, raddr *net.TCPAddr, activeSessions *atomic.Int32) { // TODO return error
 	logf(ctx, "Handling session...")
-	ctx, cancel := WithCancelFromCtx(ctx, conn.Context()) // conn.Context() isn't linked with ctx from listener.Accept(ctx)
+	ctx, cancel := withCancelFromCtx(ctx, conn.Context()) // conn.Context() isn't linked with ctx from listener.Accept(ctx)
 	defer cancel()
 	defer activeSessions.Add(-1)
 	defer func() {

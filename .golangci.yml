@@ -1,37 +1,51 @@
-linters-settings:
-  goconst:
-    min-len: 5
-    min-occurrences: 4
-  lll:
-    line-length: 150
-  misspell:
-    locale: US
-  gosec:
-    excludes: [G402]
-  ireturn:
-    allow:
-      - context.Context
-      - error
-      - io.(Reader|Writer)
-      - io.(Read|Write)Closer
-
+version: "2"
 linters:
-  enable-all: true
+  default: all
   disable:
-    - depguard
     - exhaustruct
-    - godox     # TODOs is ok
-    - mnd       # nice to have
-    - nlreturn  # nice to have
-    - paralleltest # for now we have only one integration (not parallelable) test
-    - tenv
+    - godox
+    - mnd
+    - nlreturn
+    - paralleltest
     - varnamelen
     - wsl
-
-issues:
-  exclude-rules:
-    - path: _test.go
-      linters:
-        - wrapcheck  # allow naked errors in tests
-        - fatcontext # ok in nested tests
-        - unparam    # not a crime in tests
+  settings:
+    goconst:
+      min-len: 5
+      min-occurrences: 4
+    gosec:
+      excludes:
+        - G402
+    ireturn:
+      allow:
+        - context.Context
+        - error
+        - io.(Reader|Writer)
+        - io.(Read|Write)Closer
+    lll:
+      line-length: 150
+    misspell:
+      locale: US
+    depguard:
+      rules:
+        main:
+          allow:
+            - $gostd
+            - github.com/quic-go/quic-go
+            - github.com/urfave/cli/v3
+  exclusions:
+    rules:
+      - path: _test.go
+        linters:
+          - fatcontext
+          - unparam
+          - wrapcheck
+      - source: "^\\s*defer\\s+"
+        linters:
+          - errcheck
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports

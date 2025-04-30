@@ -25,10 +25,8 @@ func main() {
 
 func application() *cli.Command {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds)
-	build, _ := debug.ReadBuildInfo()
-	m := build.Main
 	return &cli.Command{
-		Version: m.Path + "/" + m.Sum + "/" + m.Version,
+		Version: versionString(debug.ReadBuildInfo),
 		Usage:   "Client and server parts to proxy SSH (TCP) over QUIC (UDP) transport",
 		Commands: []*cli.Command{
 			{
@@ -111,7 +109,7 @@ func label(ctx context.Context) string {
 	return label
 }
 
-func WithCancelFromCtx(ctx, cancelCtx context.Context) (context.Context, context.CancelFunc) {
+func withCancelFromCtx(ctx, cancelCtx context.Context) (context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(ctx)
 	go func() {
 		select {
@@ -121,4 +119,17 @@ func WithCancelFromCtx(ctx, cancelCtx context.Context) (context.Context, context
 		}
 	}()
 	return ctx, cancel
+}
+
+func versionString(buildInfo func() (*debug.BuildInfo, bool)) string {
+	b, ok := buildInfo()
+	if !ok {
+		return "no_build_info"
+	}
+	m := b.Main
+	s := m.Sum
+	if len(s) == 0 {
+		s = "(sum)"
+	}
+	return m.Path + "/" + s + "/" + m.Version + " (go version: " + b.GoVersion + ")"
 }
