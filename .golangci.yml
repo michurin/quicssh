@@ -34,6 +34,7 @@ linters:
             - github.com/quic-go/quic-go
             - github.com/urfave/cli/v3
   exclusions:
+    warn-unused: true
     rules:
       - path: _test.go
         linters:
